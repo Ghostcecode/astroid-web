@@ -1,21 +1,15 @@
 'use client';
 
-import { ArrowDownLeft, ArrowUpRight } from 'lucide-react';
 import { PageHeader } from '@/components/dashboard/page-header';
 import { QueryBoundary } from '@/components/dashboard/query-boundary';
-import { RiskBadge } from '@/components/dashboard/risk-badge';
-import { DataTable, type Column } from '@/components/dashboard/data-table';
-import { Badge } from '@/components/ui/badge';
 import { EmptyState } from '@/components/ui/empty-state';
 import { ChartIllustration } from '@/components/illustrations';
 import { useTransactions } from '@/hooks/use-queries';
-import { transactionStatus } from '@/lib/status';
-import { formatCurrency, formatRelativeTime, truncateHash } from '@/lib/format';
-import type { Transaction } from '@/types/domain';
 import { PageTransition } from '@/components/ui/motion';
 import { XdrSignatureStatus } from '@/features/transactions/XdrSignatureStatus';
 import { FeeOptimizationPanel } from '@/features/transactions/FeeOptimizationPanel';
 import { TransactionAuditToolbar } from '@/features/transactions/TransactionAuditToolbar';
+import { TransactionHistory } from '@/features/transactions/TransactionHistory';
 
 
 const columns: Column<Transaction>[] = [
@@ -134,12 +128,7 @@ export default function TransactionsPage() {
                   a.click();
                 }}
               />
-              <DataTable<Transaction>
-                columns={columns}
-                rows={data}
-                rowKey={(t) => t.id}
-                rowHref={(t) => `/transactions/${t.id}`}
-              />
+              <TransactionHistory transactions={data} />
             </div>
           </div>
         )}

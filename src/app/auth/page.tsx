@@ -7,6 +7,7 @@ import { Sparkles, Globe, ArrowRight, Shield } from 'lucide-react';
 import Link from 'next/link';
 import { env, isMockMode } from '@/lib/env';
 import { storeToken } from '@/services/client';
+import { useFreighterStore } from '@/stores/freighter-store';
 
 /** Safely call a Freighter API function with a timeout to prevent infinite hangs. */
 async function withTimeout<T>(promise: Promise<T>, ms = 15000): Promise<T> {
@@ -23,36 +24,18 @@ export default function AuthPage() {
   const router = useRouter();
   const [isConnecting, setIsConnecting] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const connectFreighter = useFreighterStore((state) => state.connect);
 
   const handleFreighterLogin = async () => {
     try {
       setIsConnecting(true);
       setError(null);
 
-      // Dynamically import Freighter API to avoid SSR issues
-      const { setAllowed, getAddress } = await import('@stellar/freighter-api');
-
-      // setAllowed() returns { isAllowed: boolean } in v2+ API
-      const allowedResult = await withTimeout(setAllowed());
-      const isAllowed =
-        typeof allowedResult === 'boolean'
-          ? allowedResult
-          // v2 returns an object: { isAllowed: boolean }
-          : (allowedResult as { isAllowed?: boolean })?.isAllowed ?? false;
-
-      if (!isAllowed) {
-        throw new Error('Freighter connection request was rejected. Please approve it in the extension.');
-      }
-
-      // getAddress() returns { address: string } in v2+ API
-      const addressResult = await withTimeout(getAddress());
-      const publicKey: string | undefined =
-        typeof addressResult === 'string'
-          ? addressResult
-          : (addressResult as { address?: string })?.address;
+      const publicKey = await connectFreighter();
 
       if (!publicKey) {
-        throw new Error('Could not retrieve public key from Freighter.');
+        const stateError = useFreighterStore.getState().error;
+        throw new Error(stateError ?? 'Could not retrieve public key from Freighter.');
       }
 
       if (!isMockMode) {

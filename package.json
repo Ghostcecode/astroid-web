@@ -1,7 +1,7 @@
 {
   "name": "astroid-web",
   "version": "1.0.0",
-  "description": "Astroid Web — the Next.js presentation layer and design system for the Financial Operating System for autonomous AI agents on Stellar.",
+  "description": "Astroid Web \u2014 the Next.js presentation layer and design system for the Financial Operating System for autonomous AI agents on Stellar.",
   "author": "Astroid",
   "license": "MIT",
   "private": false,
@@ -9,9 +9,9 @@
     "node": ">=20.0.0"
   },
   "scripts": {
-    "dev": "next dev -p 3001",
-    "build": "next build",
-    "start": "next start -p 3001",
+    "dev": "node api.js && next dev -p 3001",
+    "build": "node api.js && next build",
+    "start": "node api.js && next start -p 3001",
     "lint": "next lint",
     "typecheck": "tsc --noEmit",
     "format": "prettier --write \"src/**/*.{ts,tsx,css}\""
